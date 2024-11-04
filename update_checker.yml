@@ -1,0 +1,22 @@
+---
+- name: Check for available updates on Windows PCs
+  hosts: Klasa7_PCs
+  gather_facts: no
+  tasks:
+    - name: Ensure Win Update module is available
+      win_feature:
+        name: UpdateServices-WidMgmt
+        state: present
+      become: yes
+
+    - name: Check for available updates
+      win_updates:
+        category_names:
+          - SecurityUpdates
+          - CriticalUpdates
+        state: searched
+      register: update_results
+
+    - name: Display available updates
+      debug:
+        var: update_results.updates
